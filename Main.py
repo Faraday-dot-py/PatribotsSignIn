@@ -1,3 +1,7 @@
+#hostname: patribots-sign-in
+#username: patribots
+#password: patribots
+
 import gspread
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
@@ -32,3 +36,8 @@ sheet_instance.col_count
 sheet_instance.update_cell(2, 1, "Val1")
 sheet_instance.update_cell(2, 2, "Val2")
 sheet_instance.update_cell(2, 3, "Val3")
+
+
+# I found this github repo that has a lot of examples of how to use rfids. I'm not sure if it will work for you, but it's worth a shot.
+# https://github.com/AdamLaurie/RFIDIOt -- This one is more complicated but has a lot to it about rfidot 
+# https://github.com/phyushin/Rfid_Register -- This one is literally someone who made a rfid sign in and out form
