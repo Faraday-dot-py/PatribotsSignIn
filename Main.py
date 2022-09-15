@@ -44,12 +44,15 @@ def readCard():
         _, id = reader.read()
         print(id)
         return id
-    finally:
-            GPIO.cleanup()
+    except Exception as e:
+        if debug:print(e)
+        return None
+    # finally:
+    #         GPIO.cleanup()
 
 #send data to spreadsheet
 def sendData(id, time):
-    sheet_instance.update('A2:B2', [[id, time]])
+    sheet_instance.update('A2:B2', [[int(id), int(time)]])
     # print(id)
 
 if debug: print("functions loaded")
