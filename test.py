@@ -1,4 +1,4 @@
-print("This is a test")
+print("Another test :)")
 
 
 # #This reads the RFID tag and prints it to the console
