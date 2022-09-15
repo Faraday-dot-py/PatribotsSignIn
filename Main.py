@@ -32,7 +32,7 @@ client = gspread.authorize(creds)
 sheet = client.open('Test')
 
 # get the third sheet of the Spreadsheet
-sheet_instance = sheet.get_worksheet(3)
+sheet_instance = sheet.get_worksheet(2)
 
 if debug: print("connected to sheet")
 
