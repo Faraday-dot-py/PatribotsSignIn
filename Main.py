@@ -1,3 +1,6 @@
+debug = True
+
+if debug: print("program started")
 #import dependencies
 import gspread
 import pandas as pd
@@ -6,8 +9,12 @@ import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 
+if debug: print("libraries loaded")
+
 #load variables
 reader = SimpleMFRC522()
+
+if debug: print("variables loaded")
 
 #----------------------------------------------------------------------------------------#
 
@@ -28,6 +35,8 @@ sheet = client.open('Test')
 # get the third sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(3)
 
+if debug: print("connected to sheet")
+
 #----------------------------------------------------------------------------------------#
 
 #reader function
@@ -44,6 +53,8 @@ def sendData(id, time):
     sheet_instance.update('A2:B2', [[id, time]])
     # print(id)
 
+if debug: print("functions loaded")
+
 #----------------------------------------------------------------------------------------#
 
 #main function
@@ -56,7 +67,9 @@ def main():
             sendData(id, time.time())
             print("Sent data to spreadsheet")
         time.sleep(1)
+        cache = id
             
+if debug: print("ready to read")
 
 if __name__ == "__main__":
     main()
