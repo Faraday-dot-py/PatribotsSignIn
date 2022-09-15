@@ -52,7 +52,7 @@ def readCard():
 
 #send data to spreadsheet
 def sendData(id, time):
-    sheet_instance.update('A2:B2', [[int(id), int(time)]])
+    sheet_instance.update('A2:B2', [[int(id), int(time)*1000]])
     # print(id)
 
 if debug: print("functions loaded")
