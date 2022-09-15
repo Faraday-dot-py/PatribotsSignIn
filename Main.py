@@ -62,11 +62,10 @@ def main():
     while True:
         id = readCard()
         if id != cache:
-            cache = id
             sendData(id, time.time())
             print("Sent data to spreadsheet")
         time.sleep(1)
-        # cache = id
+        cache = id
             
 if debug: print("ready to read")
 
