@@ -3,7 +3,6 @@ debug = True
 if debug: print("program started")
 #import dependencies
 import gspread
-import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 import time
 import RPi.GPIO as GPIO
