@@ -7,13 +7,22 @@ from oauth2client.service_account import ServiceAccountCredentials
 import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
+import numpy as np
 
 if debug: print("libraries loaded")
 
 #load variables
 reader = SimpleMFRC522()
 
+cache = np.array()
+
 if debug: print("variables loaded")
+
+#open log file
+with open('log.csv', 'a') as log:
+    pass
+
+if debug: print("loaded log file")
 
 #----------------------------------------------------------------------------------------#
 
@@ -55,6 +64,19 @@ def sendData(id, time):
     sheet_instance.update('A2:B2', [[int(id), int(time)*1000]])
     # print(id)
 
+#log id to csv file
+def logID(id):
+    with open (log.csv, 'a') as log:
+        log.write(str(id) + ',' + str(time.time()))
+
+#check if the id is in the sheet
+def isUpdated(id):
+    lastID = sheet_instance.cell(4,2)
+    if id == lastID:
+        return True
+    return False
+    
+
 if debug: print("functions loaded")
 
 #----------------------------------------------------------------------------------------#
@@ -67,10 +89,12 @@ def main():
         if id != cache:
             sendData(id, time.time())
             print("Sent data to spreadsheet")
+            if not isUpdated(id):
+                logID(id)
         time.sleep(1)
         cache = id
             
-if debug: print("ready to read")
+if debug: print("reading")
 
 if __name__ == "__main__":
     main()
