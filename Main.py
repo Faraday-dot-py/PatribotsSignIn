@@ -71,8 +71,8 @@ def logID(id):
 
 #check if the id is in the sheet
 def isUpdated(id):
-    lastID = sheet_instance.cell(4,2)
-    if id == lastID:
+    lastID = int(sheet_instance.cell(4,2))
+    if int(id) == lastID:
         return True
     return False
     
