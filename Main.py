@@ -36,11 +36,13 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('./roboticsrfidsignin.j
 # authorize the clientsheet 
 client = gspread.authorize(creds)
 
-
 # get the instance of the Spreadsheet
 sheet = client.open('Test')
 
-# get the third sheet of the Spreadsheet
+# get the instance of the log sheet
+log_sheet_instance = sheet.get_worksheet(1)
+
+# get the test sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(2)
 
 if debug: print("connected to sheet")
@@ -71,7 +73,8 @@ def logID(id):
 
 #check if the id is in the sheet
 def isUpdated(id):
-    lastID = int(sheet_instance.cell(4,2).value)
+    lastID = log_sheet_instance.cell(4,2).value
+    print(lastID)
     if int(id) == lastID:
         return True
     return False
