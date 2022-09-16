@@ -69,7 +69,7 @@ def sendData(id, time):
 #log id to csv file
 def logID(id):
     with open ('log.csv', 'a') as log:
-        log.write(str(id) + ',' + str(time.time()))
+        log.write(str(id) + ',' + str(time.time()) + "\n")
 
 #check if the id is in the sheet
 def isUpdated(id):
