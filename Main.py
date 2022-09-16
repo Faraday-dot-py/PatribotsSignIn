@@ -89,7 +89,7 @@ def main():
         if id != cache:
             sendData(id, time.time())
             print("Sent data to spreadsheet")
-            if not isUpdated(id):
+            if not isUpdated(int(id)):
                 logID(id)
         time.sleep(1)
         cache = id
