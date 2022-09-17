@@ -40,8 +40,11 @@ client = gspread.authorize(creds)
 # get the instance of the Spreadsheet
 sheet = client.open('Test')
 
-# get the third sheet of the Spreadsheet
+# get the  sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(2)
+
+#get the log instance of the Spreadsheet
+log_instance = sheet.get_worksheet(1)
 
 if debug: print("connected to sheet")
 
@@ -71,7 +74,7 @@ def logID(id):
 
 #check if the id is in the sheet
 def isUpdated(id):
-    lastID = sheet_instance.cell(1,2).value
+    lastID = log_instance.cell(1,2).value
     if int(id) == int(lastID):
         if debug: print(id)
         return True
