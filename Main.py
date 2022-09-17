@@ -13,8 +13,13 @@ if debug: print("libraries loaded")
 
 #load variables
 reader = SimpleMFRC522()
-
 cache = np.array([])
+
+#other setup
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+buzzer=23
+GPIO.setup(buzzer,GPIO.OUT)
 
 if debug: print("variables loaded")
 
