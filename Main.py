@@ -73,9 +73,15 @@ def logID(id):
 
 #check if the id is in the sheet
 def isUpdated(id):
+<<<<<<< Updated upstream
     lastID = log_sheet_instance.cell(2, 4).value
     print(lastID)
     if int(id) == lastID:
+=======
+    lastID = sheet_instance.cell(1,2)
+    if id == lastID:
+        if debug: print(id)
+>>>>>>> Stashed changes
         return True
     return False
     
@@ -92,8 +98,12 @@ def main():
         if id != cache:
             sendData(id, time.time())
             print("Sent data to spreadsheet")
+<<<<<<< Updated upstream
             if not isUpdated(int(id)):
                 logID(id)
+=======
+            logID(id)
+>>>>>>> Stashed changes
         time.sleep(1)
         cache = id
             
