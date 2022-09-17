@@ -14,7 +14,7 @@ if debug: print("libraries loaded")
 #load variables
 reader = SimpleMFRC522()
 
-# cache = np.array([], dtype=int)
+cache = np.array()
 
 if debug: print("variables loaded")
 
@@ -36,13 +36,11 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('./roboticsrfidsignin.j
 # authorize the clientsheet 
 client = gspread.authorize(creds)
 
+
 # get the instance of the Spreadsheet
 sheet = client.open('Test')
 
-# get the instance of the log sheet
-log_sheet_instance = sheet.get_worksheet(1)
-
-# get the test sheet of the Spreadsheet
+# get the third sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(2)
 
 if debug: print("connected to sheet")
@@ -68,20 +66,14 @@ def sendData(id, time):
 
 #log id to csv file
 def logID(id):
-    with open ('log.csv', 'a') as log:
-        log.write(str(id) + ',' + str(time.time()) + "\n")
+    with open (log.csv, 'a') as log:
+        log.write(str(id) + ',' + str(time.time()))
 
 #check if the id is in the sheet
 def isUpdated(id):
-<<<<<<< Updated upstream
-    lastID = log_sheet_instance.cell(2, 4).value
-    print(lastID)
-    if int(id) == lastID:
-=======
     lastID = sheet_instance.cell(1,2)
-    if id == lastID:
+    if int(id) == int(lastID):
         if debug: print(id)
->>>>>>> Stashed changes
         return True
     return False
     
@@ -98,12 +90,7 @@ def main():
         if id != cache:
             sendData(id, time.time())
             print("Sent data to spreadsheet")
-<<<<<<< Updated upstream
-            if not isUpdated(int(id)):
-                logID(id)
-=======
             logID(id)
->>>>>>> Stashed changes
         time.sleep(1)
         cache = id
             
