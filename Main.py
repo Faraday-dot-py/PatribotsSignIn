@@ -67,7 +67,7 @@ def sendData(id, time):
 #log id to csv file
 def logID(id):
     with open ('log.csv', 'a') as log:
-        log.write(str(id) + ',' + str(time.time()))
+        log.write(str(id).strip() + ',' + str(time.time()).strip())
 
 #check if the id is in the sheet
 def isUpdated(id):
@@ -91,6 +91,7 @@ def main():
             sendData(id, time.time())
             print("Sent data to spreadsheet")
             logID(id)
+            if debug: print('it worked') if isUpdated(id) else print('it didnt work')
         time.sleep(1)
         cache = id
             
