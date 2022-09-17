@@ -14,7 +14,7 @@ if debug: print("libraries loaded")
 #load variables
 reader = SimpleMFRC522()
 
-cache = np.array()
+cache = np.array([])
 
 if debug: print("variables loaded")
 
