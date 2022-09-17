@@ -1,4 +1,4 @@
-debug = True
+debug = False
 
 if debug: print("program started")
 #import dependencies
@@ -14,7 +14,7 @@ if debug: print("libraries loaded")
 #load variables
 reader = SimpleMFRC522()
 
-cache = np.array([])
+cache = np.array()
 
 if debug: print("variables loaded")
 
@@ -40,11 +40,8 @@ client = gspread.authorize(creds)
 # get the instance of the Spreadsheet
 sheet = client.open('Test')
 
-# get the  sheet of the Spreadsheet
+# get the third sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(2)
-
-#get the log instance of the Spreadsheet
-log_instance = sheet.get_worksheet(1)
 
 if debug: print("connected to sheet")
 
@@ -70,17 +67,15 @@ def sendData(id, time):
 #log id to csv file
 def logID(id):
     with open ('log.csv', 'a') as log:
-        log.write(str(id).strip() + ',' + str(time.time()).strip())
+        log.write(str(id).strip() + ',' + str(time.time()).strip() + "\n")
 
 #check if the id is in the sheet
 def isUpdated(id):
-    lastID = log_instance.cell(2,1).value
-    if int(id) == int(lastID):
-        if debug: print(id)
+    lastID = sheet_instance.cell(4,2)
+    if id == lastID:
         return True
     return False
     
-
 if debug: print("functions loaded")
 
 #----------------------------------------------------------------------------------------#
@@ -93,8 +88,8 @@ def main():
         if id != cache:
             sendData(id, time.time())
             print("Sent data to spreadsheet")
-            logID(id)
-            if debug: print('it worked') if isUpdated(id) else print('it didnt work')
+            if not isUpdated(id):
+                logID(id)
         time.sleep(1)
         cache = id
             
