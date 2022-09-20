@@ -15,8 +15,9 @@ if debug: print("libraries loaded")
 #GPIO setup
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-buzzer=23
-GPIO.setup(buzzer,GPIO.OUT)
+buzzerPin=23
+GPIO.setup(buzzerPin,GPIO.OUT)
+buzzer = GPIO.PWM(buzzerPin, 1000)
 
 #load variables
 reader = SimpleMFRC522()
@@ -133,9 +134,4 @@ def main():
 if debug: print("reading")
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(e)
-        GPIO.cleanup()
-        sys.exit()
+    main()
