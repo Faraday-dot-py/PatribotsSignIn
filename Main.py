@@ -78,7 +78,7 @@ def sendData(id, time):
 #log id to csv file
 def logID(id):
     with open ('log.csv', 'a') as log:
-        log.write(str(id).strip() + ',' + str(time.time()).strip())
+        log.write(str(id).strip() + ',' + str(time.time()).strip() + '\n')
 
 #check if the id is in the sheet
 # def isUpdated(id):
@@ -105,11 +105,23 @@ def signOutChime():
     time.sleep(chimeSpeed)
     buzzer.ChangeFrequency(784) #this is a G
     buzzer.stop()
+
+#checks if the user is signing in or out <-- Make Better
 def isSignIn():
-    time.sleep(1)
+    time.sleep(2)
     if log_instance.cell(2,4).value == 'IN':
         return True
     return False
+#Better ^
+# def isSignIn(UID):
+#     ids = sheet.col_values(1)[1:]
+#     if debug: print(ids)
+#     c = 0
+#     for id in ids:
+#         if id == UID:
+
+#         c += 1
+
 
     
 
