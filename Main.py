@@ -8,18 +8,20 @@ import time
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import numpy as np
+import sys
 
 if debug: print("libraries loaded")
+
+#GPIO setup
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+buzzer=23
+GPIO.setup(buzzer,GPIO.OUT)
 
 #load variables
 reader = SimpleMFRC522()
 cache = np.array([])
-
-#other setup
-#GPIO.setwarnings(False)
-#GPIO.setmode(GPIO.BCM)
-#buzzer=23
-#GPIO.setup(buzzer,GPIO.OUT)
+chimeSpeed = 0.1
 
 if debug: print("variables loaded")
 
@@ -78,12 +80,33 @@ def logID(id):
         log.write(str(id).strip() + ',' + str(time.time()).strip())
 
 #check if the id is in the sheet
-def isUpdated(id):
-    lastID = log_instance.cell(2,1).value
-    if int(id) == int(lastID):
-        if debug: print(id)
+# def isUpdated(id):
+#     lastID = log_instance.cell(2,1).value
+#     if int(id) == int(lastID):
+#         if debug: print(id)
+#         return True
+#     return False
+
+#play the sign in chime:
+def signInChime():
+    buzzer.start(90)
+    buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
+    time.sleep(chimeSpeed)
+    buzzer.ChangeFrequency(523) #this is a C
+
+#play the sign out chime:
+def signOutChime():
+    buzzer.start(90)
+    buzzer.ChangeFrequency(523) #this is a C
+    time.sleep(chimeSpeed)
+    buzzer.ChangeFrequency(784) #this is a G
+
+def isSignIn():
+    time.sleep(1)
+    if log_instance.cell(2,4).value == 'IN':
         return True
     return False
+
     
 
 if debug: print("functions loaded")
@@ -99,11 +122,20 @@ def main():
             sendData(id, time.time())
             print("Sent data to spreadsheet")
             logID(id)
-            if debug: print('it worked') if isUpdated(id) else print('it didnt work')
+            # if debug: print('it worked') if isUpdated(id) else print('it didnt work') <-- This doesn't work
+            if isSignIn():
+                signInChime()
+            else:
+                signOutChime()
         time.sleep(1)
         cache = id
             
 if debug: print("reading")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e)
+        GPIO.cleanup()
+        sys.exit()
