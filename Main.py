@@ -90,6 +90,7 @@ def logID(id):
 
 #play the sign in chime:
 def signInChime():
+    if debug: print('chimeIn')
     buzzer.start(90)
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
     time.sleep(chimeSpeed)
@@ -98,6 +99,7 @@ def signInChime():
 
 #play the sign out chime:
 def signOutChime():
+    if debug: print('chimeOut')
     buzzer.start(90)
     buzzer.ChangeFrequency(523) #this is a C
     time.sleep(chimeSpeed)
