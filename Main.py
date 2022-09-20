@@ -94,6 +94,7 @@ def signInChime():
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
     time.sleep(chimeSpeed)
     buzzer.ChangeFrequency(523) #this is a C
+    buzzer.stop()
 
 #play the sign out chime:
 def signOutChime():
@@ -101,7 +102,7 @@ def signOutChime():
     buzzer.ChangeFrequency(523) #this is a C
     time.sleep(chimeSpeed)
     buzzer.ChangeFrequency(784) #this is a G
-
+    buzzer.stop()
 def isSignIn():
     time.sleep(1)
     if log_instance.cell(2,4).value == 'IN':
