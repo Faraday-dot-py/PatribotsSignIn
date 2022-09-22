@@ -133,10 +133,6 @@ def isSignIn(id):
     
         
 
-
-
-    
-
 if debug: print("functions loaded")
 
 #----------------------------------------------------------------------------------------#
@@ -172,7 +168,7 @@ def main():
                         time.sleep(0.25)
 
                         #play the corresponding chime
-                        if isSignIn():
+                        if isSignIn(int(id)):
                             signInChime()
                         else:
                             signOutChime()
