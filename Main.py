@@ -24,7 +24,7 @@ GPIO.setwarnings(False)
 #load variables
 reader = SimpleMFRC522()
 cache = np.array([])
-chimeSpeed = 1
+chimeSpeed = 0.1
 
 if debug: print("variables loaded")
 
@@ -97,6 +97,7 @@ def signInChime():
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
     time.sleep(chimeSpeed)
     buzzer.ChangeFrequency(523) #this is a C
+    time.sleep(chimeSpeed)
     buzzer.stop()
 
 #play the sign out chime:
@@ -106,6 +107,7 @@ def signOutChime():
     buzzer.ChangeFrequency(523) #this is a C
     time.sleep(chimeSpeed)
     buzzer.ChangeFrequency(784) #this is a G
+    time.sleep(chimeSpeed)
     buzzer.stop()
 
 #checks if the user is signing in or out <-- Make Better
