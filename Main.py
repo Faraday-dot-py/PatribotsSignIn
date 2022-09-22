@@ -24,7 +24,7 @@ GPIO.setwarnings(False)
 #load variables
 reader = SimpleMFRC522()
 cache = np.array([])
-chimeSpeed = 0.1
+chimeSpeed = 1
 
 if debug: print("variables loaded")
 
