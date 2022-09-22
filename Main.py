@@ -143,6 +143,7 @@ def main():
             print("Sent data to spreadsheet")
             logID(id)
             # if debug: print('it worked') if isUpdated(id) else print('it didnt work') <-- This doesn't work
+            time.sleep(0.25)
             if isSignIn():
                 signInChime()
             else:
