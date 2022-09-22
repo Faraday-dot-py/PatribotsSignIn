@@ -18,6 +18,8 @@ GPIO.setmode(GPIO.BCM)
 buzzerPin=23
 GPIO.setup(buzzerPin,GPIO.OUT)
 buzzer = GPIO.PWM(buzzerPin, 1000)
+#Disables those pesky warnings
+GPIO.setwarnings(False)
 
 #load variables
 reader = SimpleMFRC522()
@@ -109,6 +111,8 @@ def signOutChime():
 #checks if the user is signing in or out <-- Make Better
 def isSignIn():
     time.sleep(2)
+    # Alexander wonders if the "2,4" is static and should be dynamic
+    # or is meant to be that for reasons other than testing
     if log_instance.cell(2,4).value == 'IN':
         return True
     return False
