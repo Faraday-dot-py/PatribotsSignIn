@@ -15,7 +15,7 @@ if debug: print("libraries loaded")
 #GPIO setup
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-buzzerPin=23
+buzzerPin=13
 GPIO.setup(buzzerPin,GPIO.OUT)
 buzzer = GPIO.PWM(buzzerPin, 1000)
 #Disables those pesky warnings
