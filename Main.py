@@ -126,10 +126,14 @@ def isSignIn(id):
     log = np.genfromtxt('log.csv', delimiter=',')
     for i in range(len(log)-1, -1, -1):
         if log[i][0] == id:
-            if log[i][2] == 1:
+            try:
+                if log[i][2] == 1:
+                    return True
+                else:
+                    return False
+            except Exception as e:
+                print(e)
                 return True
-            else:
-                return False
     return False
     
         
