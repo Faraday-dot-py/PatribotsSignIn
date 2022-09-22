@@ -2,6 +2,7 @@ debug = True
 
 if debug: print("program started")
 #import dependencies
+from distutils.log import error
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import time
@@ -23,7 +24,7 @@ GPIO.setwarnings(False)
 
 #load variables
 reader = SimpleMFRC522()
-cache = np.array([])
+cache = {1:1, 2:2, 3:3}
 chimeSpeed = 0.1
 
 if debug: print("variables loaded")
@@ -91,7 +92,7 @@ def logID(id):
 #     return False
 
 #play the sign in chime:
-def signInChime():
+def signOutChime():
     if debug: print('chimeIn')
     buzzer.start(90)
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
@@ -101,7 +102,7 @@ def signInChime():
     buzzer.stop()
 
 #play the sign out chime:
-def signOutChime():
+def signInChime():
     if debug: print('chimeOut')
     buzzer.start(90)
     buzzer.ChangeFrequency(523) #this is a C
@@ -110,23 +111,28 @@ def signOutChime():
     time.sleep(chimeSpeed)
     buzzer.stop()
 
-#checks if the user is signing in or out <-- Make Better
-def isSignIn():
-    time.sleep(2)
-    # Alexander wonders if the "2,4" is static and should be dynamic
-    # or is meant to be that for reasons other than testing
-    if log_instance.cell(2,4).value == 'IN':
-        return True
-    return False
-#Better ^
-# def isSignIn(UID):
-#     ids = sheet.col_values(1)[1:]
-#     if debug: print(ids)
-#     c = 0
-#     for id in ids:
-#         if id == UID:
+def errorChime():
+    if debug: print('errorChime')
+    buzzer.ChangeFrequency(523)
+    for i in range(3):
+        buzzer.start(90)
+        time.sleep(chimeSpeed*2)
+        buzzer.stop()
+    
 
-#         c += 1
+#checks if the user is signing in or out <-- Make Better
+def isSignIn(id):
+    log = np.genfromtxt('log.csv', delimiter=',')
+    for i in range(len(log)-1, -1, -1):
+        if log[i][0] == id:
+            if log[i][2] == 1:
+                return True
+            else:
+                return False
+    return False
+    
+        
+
 
 
     
@@ -137,21 +143,50 @@ if debug: print("functions loaded")
 
 #main function
 def main():
-    cache = None
+    lastID = None
     while True:
         id = readCard()
-        if id != cache:
-            sendData(id, time.time())
-            print("Sent data to spreadsheet")
-            logID(id)
-            # if debug: print('it worked') if isUpdated(id) else print('it didnt work') <-- This doesn't work
-            time.sleep(0.25)
-            if isSignIn():
-                signInChime()
-            else:
-                signOutChime()
-        time.sleep(1)
-        cache = id
+        try:
+            #make sure that the read did not fail
+            int(id)
+            try:
+                #make sure that the id was not scanned twice
+                if id != lastID:
+                    #check to see if the cooldown for an id has expired
+                    try:
+                        #check if the card has been scanned in the last 60 seconds
+                        if cache[int(id)] + 60 <= time.time():
+                            if debug: print("id on cooldown")
+                            errorChime()
+                        else:
+                            raise Exception("All is good, this is just to run the except")
+
+                    except:
+                        #send data to spreadsheet
+                        sendData(id, time.time())
+                        print("Sent data to spreadsheet")
+
+                        #log id to csv file
+                        logID(id)
+                        # if debug: print('it worked') if isUpdated(id) else print('it didnt work') <-- This doesn't work
+                        time.sleep(0.25)
+
+                        #play the corresponding chime
+                        if isSignIn():
+                            signInChime()
+                        else:
+                            signOutChime()
+
+                        #update the last id
+                        lastID = id
+                        cache[int(id)] = time.time()
+            except Exception as e:
+                if debug: print(e)
+                errorChime()
+        except ValueError:
+            errorChime()
+            continue
+        
             
 if debug: print("reading")
 
