@@ -154,6 +154,7 @@ def main():
             try:
                 #make sure that the id was not scanned twice
                 if id != lastID:
+                    lastID = id
                     #check to see if the cooldown for an id has expired
                     try:
                         #check if the card has been scanned in the last 60 seconds
@@ -181,8 +182,7 @@ def main():
                             signOutChime()
                         if debug: print("played chime")
 
-                        #update the last id
-                        lastID = id
+                        #update the cache
                         cache[int(id)] = time.time()
                         if debug: print("updated cache")
     
