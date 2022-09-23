@@ -2,6 +2,7 @@ debug = True
 
 if debug: print("program started")
 #import dependencies
+from ast import Index
 from distutils.log import error
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -125,15 +126,15 @@ def errorChime():
 def isSignIn(id):
     log = np.genfromtxt('log.csv', delimiter=',')
     for i in range(log.size-1, -1, -1):
-        if log[i][0] == id:
-            try:
+        try:
+            if log[i][0] == id:
                 if log[i][2] == 1:
                     return True
                 else:
                     return False
-            except Exception as e:
-                print(e)
-                return True
+        except IndexError as e:
+            if debug: print(e)
+            return False
     return False
     
         
