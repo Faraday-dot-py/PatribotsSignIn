@@ -82,7 +82,7 @@ def sendData(id, time):
 #log id to csv file
 def logID(id):
     with open ('log.csv', 'a') as log:
-        log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + "1" if isSignIn(id) else "0" + '\n')
+        log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + ("1" if isSignIn(id) else "0") + '\n')
 
 #check if the id is in the sheet
 # def isUpdated(id):
@@ -185,13 +185,14 @@ def main():
                         lastID = id
                         cache[int(id)] = time.time()
                         if debug: print("updated cache")
-
+    
             except Exception as e:
                 if debug: print(e)
                 errorChime()
         except ValueError:
             errorChime()
             continue
+        if debug: print("#-----------------------------------------#")
         
             
 if debug: print("reading")
