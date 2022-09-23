@@ -154,18 +154,16 @@ def main():
                 #make sure that the id was not scanned twice
                 if id != lastID:
                     #check to see if the cooldown for an id has expired
-                    if 1:
+                    try:
                         #check if the card has been scanned in the last 60 seconds
-                        if debug: print("Checking cache")
                         if cache[int(id)] + 60 <= time.time():
                             if debug: print("id on cooldown")
                             errorChime()
                         else:
                             if debug: print("id not on cooldown")
-                            raise Exception("All is good, this is just to run the except")
-                        
+                            raise KeyError("All is good, this is just to run the except")
 
-                    if 1:
+                    except Exception:
                         #send data to spreadsheet
                         sendData(id, time.time())
                         if debug: print(f"Sent id {id} to spreadsheet")
