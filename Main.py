@@ -81,7 +81,7 @@ def sendData(id, time):
 #log id to csv file
 def logID(id):
     with open ('log.csv', 'a') as log:
-        log.write(str(id).strip() + ',' + str(time.time()).strip() + '\n')
+        log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + "1" if isSignIn(id) else "0" + '\n')
 
 #check if the id is in the sheet
 # def isUpdated(id):
@@ -124,12 +124,16 @@ def errorChime():
 #checks if the user is signing in or out <-- Make Better
 def isSignIn(id):
     log = np.genfromtxt('log.csv', delimiter=',')
-    for i in range(len(log)-1, -1, -1):
+    for i in range(log.size-1, -1, -1):
         if log[i][0] == id:
-            if log[i][2] == 1:
+            try:
+                if log[i][2] == 1:
+                    return True
+                else:
+                    return False
+            except Exception as e:
+                print(e)
                 return True
-            else:
-                return False
     return False
     
         
