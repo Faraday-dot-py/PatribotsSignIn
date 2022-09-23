@@ -113,9 +113,9 @@ def signInChime():
 
 def errorChime():
     if debug: print('errorChime')
-    buzzer.ChangeFrequency(523)
     for i in range(3):
         buzzer.start(90)
+        buzzer.ChangeFrequency(523)
         time.sleep(chimeSpeed*2)
         buzzer.stop()
         time.sleep(chimeSpeed*2)
@@ -143,46 +143,52 @@ def main():
     lastID = None
     while True:
         id = readCard()
-        try:
+        if 1:
             #make sure that the read did not fail
             int(id)
-            try:
+            if 1:
                 #make sure that the id was not scanned twice
                 if id != lastID:
                     #check to see if the cooldown for an id has expired
-                    try:
+                    if 1:
                         #check if the card has been scanned in the last 60 seconds
+                        if debug: print("Checking cache")
                         if cache[int(id)] + 60 <= time.time():
                             if debug: print("id on cooldown")
                             errorChime()
                         else:
+                            if debug: print("id not on cooldown")
                             raise Exception("All is good, this is just to run the except")
+                        
 
-                    except:
+                    if 1:
                         #send data to spreadsheet
                         sendData(id, time.time())
-                        print("Sent data to spreadsheet")
+                        if debug: print(f"Sent id {id} to spreadsheet")
 
                         #log id to csv file
                         logID(id)
-                        # if debug: print('it worked') if isUpdated(id) else print('it didnt work') <-- This doesn't work
                         time.sleep(0.25)
+                        if debug: print("logged id to csv")
 
                         #play the corresponding chime
                         if isSignIn(int(id)):
                             signInChime()
                         else:
                             signOutChime()
+                        if debug: print("played chime")
 
                         #update the last id
                         lastID = id
                         cache[int(id)] = time.time()
-            except Exception as e:
-                if debug: print(e)
-                errorChime()
-        except ValueError:
-            errorChime()
-            continue
+                        if debug: print("updated cache")
+
+        #     except Exception as e:
+        #         if debug: print(e)
+        #         errorChime()
+        # except ValueError:
+        #     errorChime()
+        #     continue
         
             
 if debug: print("reading")
