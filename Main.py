@@ -93,7 +93,7 @@ def logID(id):
 #     return False
 
 #play the sign in chime:
-def signOutChime():
+def signInChime():
     if debug: print('chimeIn')
     buzzer.start(90)
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
@@ -103,7 +103,7 @@ def signOutChime():
     buzzer.stop()
 
 #play the sign out chime:
-def signInChime():
+def signOutChime():
     if debug: print('chimeOut')
     buzzer.start(90)
     buzzer.ChangeFrequency(523) #this is a C
@@ -148,10 +148,10 @@ def main():
     lastID = None
     while True:
         id = readCard()
-        if 1:
+        try:
             #make sure that the read did not fail
             int(id)
-            if 1:
+            try:
                 #make sure that the id was not scanned twice
                 if id != lastID:
                     #check to see if the cooldown for an id has expired
@@ -186,12 +186,12 @@ def main():
                         cache[int(id)] = time.time()
                         if debug: print("updated cache")
 
-        #     except Exception as e:
-        #         if debug: print(e)
-        #         errorChime()
-        # except ValueError:
-        #     errorChime()
-        #     continue
+            except Exception as e:
+                if debug: print(e)
+                errorChime()
+        except ValueError:
+            errorChime()
+            continue
         
             
 if debug: print("reading")
