@@ -25,7 +25,7 @@ GPIO.setwarnings(False)
 
 #load variables
 reader = SimpleMFRC522()
-cache = {1:1, 2:2, 3:3}
+cache = {}
 chimeSpeed = 0.1
 
 if debug: print("variables loaded")
@@ -154,41 +154,38 @@ def main():
             #make sure that the read did not fail
             int(id)
             try:
-                #make sure that the id was not scanned twice
-                if id != lastID:
-                    lastID = id
-                    #check to see if the cooldown for an id has expired
-                    try:
-                        #check if the card has been scanned in the last 60 seconds
-                        if cache[int(id)] + 60 <= time.time():
-                            if debug: print("id on cooldown")
-                            errorChime()
-                        else:
-                            if debug: print("id not on cooldown")
-                            raise KeyError("All is good, this is just to run the except")
+                #check to see if the cooldown for an id has expired
+                try:
+                    #check if the card has been scanned in the last 60 seconds
+                    if time.time() - cache[int(id)] < 60:
+                        if debug: print("id on cooldown")
+                        errorChime()
+                    else:
+                        if debug: print("id not on cooldown")
+                        raise Exception("All is good, this is just to run the except")
 
-                    except Exception:
-                        #send data to spreadsheet
-                        sendData(id, time.time())
-                        if debug: print(f"Sent id {id} to spreadsheet")
+                except Exception:
+                    #send data to spreadsheet
+                    sendData(id, time.time())
+                    if debug: print(f"Sent id {id} to spreadsheet")
 
-                        is_sign_in = isSignIn(int(id))
+                    is_sign_in = isSignIn(int(id))
 
-                        #play the corresponding chime
-                        if is_sign_in:
-                            signInChime()
-                        else:
-                            signOutChime()
-                        if debug: print("played chime")
+                    #play the corresponding chime
+                    if is_sign_in:
+                        signInChime()
+                    else:
+                        signOutChime()
+                    if debug: print("played chime")
 
-                        #log id to csv file
-                        logID(id, is_sign_in)
-                        time.sleep(0.25)
-                        if debug: print("logged id to csv")
+                    #log id to csv file
+                    logID(id, is_sign_in)
+                    time.sleep(0.25)
+                    if debug: print("logged id to csv")
 
-                        #update the cache
-                        cache[int(id)] = time.time()
-                        if debug: print("updated cache")
+                    #update the cache
+                    cache[int(id)] = time.time()
+                    if debug: print("updated cache")
     
             except Exception as e:
                 if debug: print(e)
