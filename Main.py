@@ -119,9 +119,9 @@ def errorChime():
     for i in range(3):
         buzzer.start(90)
         buzzer.ChangeFrequency(523)
-        time.sleep(chimeSpeed*2)
+        time.sleep(chimeSpeed)
         buzzer.stop()
-        time.sleep(chimeSpeed*2)
+        time.sleep(chimeSpeed)
     
 
 #checks if the user is signing in or out <-- Make Better
