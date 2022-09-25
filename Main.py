@@ -80,9 +80,11 @@ def sendData(id, time):
     # print(id)
 
 #log id to csv file
-def logID(id):
+def logID(id, is_sign_in):
     with open ('log.csv', 'a') as log:
-        log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + ("1" if isSignIn(id) else "0") + '\n')
+        is_sign_in = 1 if is_sign_in else 0
+        if debug: print(f"is_sign_in (in log): {is_sign_in}")
+        log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + str(is_sign_in) + '\n')
 
 #check if the id is in the sheet
 # def isUpdated(id):
@@ -93,8 +95,8 @@ def logID(id):
 #     return False
 
 #play the sign in chime:
-def signInChime():
-    if debug: print('chimeIn')
+def signOutChime():
+    if debug: print('chimeOut')
     buzzer.start(90)
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
     time.sleep(chimeSpeed)
@@ -103,8 +105,8 @@ def signInChime():
     buzzer.stop()
 
 #play the sign out chime:
-def signOutChime():
-    if debug: print('chimeOut')
+def signInChime():
+    if debug: print('chimeIn')
     buzzer.start(90)
     buzzer.ChangeFrequency(523) #this is a C
     time.sleep(chimeSpeed)
@@ -170,17 +172,19 @@ def main():
                         sendData(id, time.time())
                         if debug: print(f"Sent id {id} to spreadsheet")
 
-                        #log id to csv file
-                        logID(id)
-                        time.sleep(0.25)
-                        if debug: print("logged id to csv")
+                        is_sign_in = isSignIn(int(id))
 
                         #play the corresponding chime
-                        if isSignIn(int(id)):
+                        if is_sign_in:
                             signInChime()
                         else:
                             signOutChime()
                         if debug: print("played chime")
+
+                        #log id to csv file
+                        logID(id, is_sign_in)
+                        time.sleep(0.25)
+                        if debug: print("logged id to csv")
 
                         #update the cache
                         cache[int(id)] = time.time()
