@@ -11,6 +11,8 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import numpy as np
 import sys
+import board
+from neopixel import NeoPixel
 
 if debug: print("libraries loaded")
 
@@ -27,6 +29,10 @@ GPIO.setwarnings(False)
 reader = SimpleMFRC522()
 cache = {}
 chimeSpeed = 0.1
+
+#create LED instance
+led = NeoPixel(board.D12, 1)
+statuses = {"idle":(255, 255, 255), "error":(255,0,0), "fatal":(255,255,0), "in":(0,255,0), "out":(0,0,255)}
 
 if debug: print("variables loaded")
 
@@ -86,15 +92,7 @@ def logID(id, is_sign_in):
         if debug: print(f"is_sign_in (in log): {is_sign_in}")
         log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + str(is_sign_in) + '\n')
 
-#check if the id is in the sheet
-# def isUpdated(id):
-#     lastID = log_instance.cell(2,1).value
-#     if int(id) == int(lastID):
-#         if debug: print(id)
-#         return True
-#     return False
-
-#play the sign in chime:
+#play the sign in chime
 def signOutChime():
     if debug: print('chimeOut')
     buzzer.start(90)
@@ -104,7 +102,7 @@ def signOutChime():
     time.sleep(chimeSpeed)
     buzzer.stop()
 
-#play the sign out chime:
+#play the sign out chime
 def signInChime():
     if debug: print('chimeIn')
     buzzer.start(90)
@@ -114,6 +112,7 @@ def signInChime():
     time.sleep(chimeSpeed)
     buzzer.stop()
 
+#play the error chime
 def errorChime():
     if debug: print('errorChime')
     for i in range(3):
@@ -124,7 +123,7 @@ def errorChime():
         time.sleep(chimeSpeed)
     
 
-#checks if the user is signing in or out <-- Make Better
+#checks if the user is signing in or out
 def isSignIn(id):
     log = np.genfromtxt('log.csv', delimiter=',')
     for i in range(len(log)-1, -1, -1):
@@ -139,7 +138,19 @@ def isSignIn(id):
             return True
     return True
     
-        
+#Sets the LED to whatever status is passed in
+#Valid Statuses: "idle, error, fatal, sign in, sign out"
+def setLED(status):
+    status = status.lower()
+    #make sure status is a string
+    if type(status) != str:
+        raise TypeError("Status must be a string")
+    #make sure status is a valid status
+    try:
+        statuses[status]
+    except KeyError as e:
+        raise ValueError("Invalid status passed to setLED")
+    led[0] = statuses[status]
 
 if debug: print("functions loaded")
 
@@ -149,50 +160,66 @@ if debug: print("functions loaded")
 def main():
     lastID = None
     while True:
-        id = readCard()
         try:
-            #make sure that the read did not fail
-            int(id)
+            setLED("idle")
+            id = readCard()
             try:
-                #check to see if the cooldown for an id has expired
+                #make sure that the read did not fail
+                int(id)
                 try:
-                    #check if the card has been scanned in the last 60 seconds
-                    if time.time() - cache[int(id)] < 60:
-                        if debug: print("id on cooldown")
-                        errorChime()
-                    else:
-                        if debug: print("id not on cooldown")
-                        raise Exception("All is good, this is just to run the except")
+                    #check to see if the cooldown for an id has expired
+                    try:
+                        #check if the card has been scanned in the last 60 seconds
+                        if time.time() - cache[int(id)] < 60:
+                            if debug: print("id on cooldown")
+                            errorChime()
+                        else:
+                            if debug: print("id not on cooldown")
+                            raise Exception("All is good, this is just to run the except")
 
-                except Exception:
-                    #send data to spreadsheet
-                    sendData(id, time.time())
-                    if debug: print(f"Sent id {id} to spreadsheet")
+                    except Exception:
+                        #send data to spreadsheet
+                        sendData(id, time.time())
+                        if debug: print(f"Sent id {id} to spreadsheet")
 
-                    is_sign_in = isSignIn(int(id))
+                        is_sign_in = isSignIn(int(id))
 
-                    #play the corresponding chime
-                    if is_sign_in:
-                        signInChime()
-                    else:
-                        signOutChime()
-                    if debug: print("played chime")
+                        #play the corresponding chime
+                        if is_sign_in:
+                            signInChime()
+                            setLED("in")
+                        else:
+                            signOutChime()
+                            setLED("out")
+                        if debug: print("played chime")
 
-                    #log id to csv file
-                    logID(id, is_sign_in)
-                    time.sleep(0.25)
-                    if debug: print("logged id to csv")
+                        #log id to csv file
+                        logID(id, is_sign_in)
+                        time.sleep(0.25)
+                        if debug: print("logged id to csv")
 
-                    #update the cache
-                    cache[int(id)] = time.time()
-                    if debug: print("updated cache")
-    
-            except Exception as e:
-                if debug: print(e)
+                        #update the cache
+                        cache[int(id)] = time.time()
+                        if debug: print("updated cache")
+        
+                except Exception as e:
+                    if debug: print(e)
+                    errorChime()
+                    setLED("error")
+            except ValueError:
                 errorChime()
-        except ValueError:
+                setLED("error")
+                continue
+        except Exception as e:
+            #Sets LED to fatal and saves the error to an error log for later debugging
+            exc_type, _, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            with open("errors.csv", "a") as errorLog:
+                errorLog.write(str(exc_type) + "," + str(fname) + "," + str(exc_tb.tb_lineno) + "," + str(e) + "\n")
+            setLED("fatal")
             errorChime()
-            continue
+            raise SystemExit(str(exc_type) + "," + str(fname) + "," + str(exc_tb.tb_lineno) + "," + str(e) + "\n")
+
         if debug: print("#-----------------------------------------#")
         
             
