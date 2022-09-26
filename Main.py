@@ -13,6 +13,7 @@ import numpy as np
 import sys
 import board
 from neopixel import NeoPixel
+import os
 
 if debug: print("libraries loaded")
 
