@@ -173,8 +173,8 @@ def main():
                         #check if the card has been scanned in the last 60 seconds
                         if time.time() - cache[int(id)] < 60:
                             if debug: print("id on cooldown")
-                            errorChime()
                             setLED("error")
+                            errorChime()
                         else:
                             if debug: print("id not on cooldown")
                             raise Exception("All is good, this is just to run the except")
@@ -188,11 +188,11 @@ def main():
 
                         #play the corresponding chime
                         if is_sign_in:
-                            signInChime()
                             setLED("in")
+                            signInChime()
                         else:
-                            signOutChime()
                             setLED("out")
+                            signOutChime()
                         if debug: print("played chime")
 
                         #log id to csv file
