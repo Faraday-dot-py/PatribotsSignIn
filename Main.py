@@ -174,6 +174,7 @@ def main():
                         if time.time() - cache[int(id)] < 60:
                             if debug: print("id on cooldown")
                             errorChime()
+                            setLED("error")
                         else:
                             if debug: print("id not on cooldown")
                             raise Exception("All is good, this is just to run the except")
