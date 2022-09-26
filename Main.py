@@ -44,8 +44,8 @@ with open('log.csv', 'a') as log:
 if debug: print("loaded log file")
 
 #----------------------------------------------------------------------------------------#
-
 #connect to spreadsheet
+
 # define the scope
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
@@ -73,18 +73,14 @@ if debug: print("connected to sheet")
 def readCard():
     try:
         _, id = reader.read()
-        print(id)
         return id
     except Exception as e:
-        if debug:print(e)
+        if debug: print(e)
         return None
-    # finally:
-    #         GPIO.cleanup()
 
 #send data to spreadsheet
 def sendData(id, time):
     sheet_instance.update('A2:B2', [[int(id), int(time)*1000]])
-    # print(id)
 
 #log id to csv file
 def logID(id, is_sign_in):
@@ -163,7 +159,13 @@ def main():
     while True:
         try:
             setLED("idle")
-            id = readCard()
+
+            #turn off LED if KeyboardInterrupt is detected
+            try:
+                id = readCard()
+            except KeyboardInterrupt:
+                setLED("off")
+
             try:
                 #make sure that the read did not fail
                 int(id)
