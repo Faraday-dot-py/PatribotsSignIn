@@ -136,8 +136,8 @@ def isSignIn(id):
                     return False
         except IndexError as e:
             if debug: print(e)
-            return False
-    return False
+            return True
+    return True
     
         
 
