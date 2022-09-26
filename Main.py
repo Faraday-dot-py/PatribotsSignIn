@@ -38,7 +38,7 @@ statuses = {"idle":(255, 255, 255), "error":(255,0,0), "fatal":(255,255,0), "in"
 if debug: print("variables loaded")
 
 #open log file
-with open('log.csv', 'a') as log:
+with open("/home/patribots/PatribotsSignIn/log.csv", "a") as log:
     pass
 
 if debug: print("loaded log file")
@@ -47,17 +47,17 @@ if debug: print("loaded log file")
 #connect to spreadsheet
 
 # define the scope
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
 
 # add credentials to the account
-creds = ServiceAccountCredentials.from_json_keyfile_name('./roboticsrfidsignin.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("/home/patribots/PatribotsSignIn/roboticsrfidsignin.json", scope)
 
 # authorize the clientsheet 
 client = gspread.authorize(creds)
 
 
 # get the instance of the Spreadsheet
-sheet = client.open('Test')
+sheet = client.open("Test")
 
 # get the  sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(2)
@@ -80,18 +80,18 @@ def readCard():
 
 #send data to spreadsheet
 def sendData(id, time):
-    sheet_instance.update('A2:B2', [[int(id), int(time)*1000]])
+    sheet_instance.update("A2:B2", [[int(id), int(time)*1000]])
 
 #log id to csv file
 def logID(id, is_sign_in):
-    with open ('log.csv', 'a') as log:
+    with open ("log.csv", "a") as log:
         is_sign_in = 1 if is_sign_in else 0
         if debug: print(f"is_sign_in (in log): {is_sign_in}")
-        log.write(str(id).strip() + ',' + str(time.time()).strip() + "," + str(is_sign_in) + '\n')
+        log.write(str(id).strip() + "," + str(time.time()).strip() + "," + str(is_sign_in) + "\n")
 
 #play the sign in chime
 def signOutChime():
-    if debug: print('chimeOut')
+    if debug: print("chimeOut")
     buzzer.start(90)
     buzzer.ChangeFrequency(809) #this is an A (one octave up than the other notes)
     time.sleep(chimeSpeed)
@@ -101,7 +101,7 @@ def signOutChime():
 
 #play the sign out chime
 def signInChime():
-    if debug: print('chimeIn')
+    if debug: print("chimeIn")
     buzzer.start(90)
     buzzer.ChangeFrequency(523) #this is a C
     time.sleep(chimeSpeed)
@@ -111,7 +111,7 @@ def signInChime():
 
 #play the error chime
 def errorChime():
-    if debug: print('errorChime')
+    if debug: print("errorChime")
     for i in range(3):
         buzzer.start(90)
         buzzer.ChangeFrequency(523)
@@ -122,7 +122,7 @@ def errorChime():
 
 #checks if the user is signing in or out
 def isSignIn(id):
-    log = np.genfromtxt('log.csv', delimiter=',')
+    log = np.genfromtxt("log.csv", delimiter=",")
     for i in range(len(log)-1, -1, -1):
         try:
             if log[i][0] == id:
@@ -218,7 +218,7 @@ def main():
             #Sets LED to fatal and saves the error to an error log for later debugging
             exc_type, _, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            with open("errors.csv", "a") as errorLog:
+            with open("/home/patribots/PatribotsSignIn/errors.csv", "a") as errorLog:
                 errorLog.write(str(exc_type) + "," + str(fname) + "," + str(exc_tb.tb_lineno) + "," + str(e) + "\n")
             setLED("fatal")
             errorChime()
