@@ -33,7 +33,7 @@ chimeSpeed = 0.1
 
 #create LED instance
 led = NeoPixel(board.D12, 1)
-statuses = {"idle":(255, 255, 255), "error":(255,0,0), "fatal":(255,255,0), "in":(0,255,0), "out":(0,0,255)}
+statuses = {"idle":(255, 255, 255), "error":(255,0,0), "fatal":(255,255,0), "in":(0,255,0), "out":(0,0,255), "off":(0,0,0)}
 
 if debug: print("variables loaded")
 
@@ -222,7 +222,11 @@ def main():
             errorChime()
             raise SystemExit(str(exc_type) + "," + str(fname) + "," + str(exc_tb.tb_lineno) + "," + str(e) + "\n")
 
-        if debug: print("#-----------------------------------------#")
+        try:
+            if debug: print("#-----------------------------------------#")
+        except KeyboardInterrupt:
+            setLED("off")
+            
         
             
 if debug: print("reading")
