@@ -84,7 +84,7 @@ def sendData(id, time):
 
 #log id to csv file
 def logID(id, is_sign_in):
-    with open ("log.csv", "a") as log:
+    with open ("/home/patribots/PatribotsSignIn/log.csv", "a") as log:
         is_sign_in = 1 if is_sign_in else 0
         if debug: print(f"is_sign_in (in log): {is_sign_in}")
         log.write(str(id).strip() + "," + str(time.time()).strip() + "," + str(is_sign_in) + "\n")
@@ -122,7 +122,7 @@ def errorChime():
 
 #checks if the user is signing in or out
 def isSignIn(id):
-    log = np.genfromtxt("log.csv", delimiter=",")
+    log = np.genfromtxt("/home/patribots/PatribotsSignIn/log.csv", delimiter=",")
     for i in range(len(log)-1, -1, -1):
         try:
             if log[i][0] == id:
