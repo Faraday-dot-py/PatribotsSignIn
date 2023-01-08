@@ -8,7 +8,6 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import time
 import RPi.GPIO as GPIO
-from mfrc522 import SimpleMFRC522
 import numpy as np
 import sys
 import board
