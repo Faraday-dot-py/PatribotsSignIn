@@ -14,6 +14,9 @@ import sys
 import board
 from neopixel import NeoPixel
 import os
+import cv2
+from pyzbar import pyzbar
+
 
 if debug: print("libraries loaded")
 
@@ -27,9 +30,11 @@ buzzer = GPIO.PWM(buzzerPin, 1000)
 GPIO.setwarnings(False)
 
 #load variables
-reader = SimpleMFRC522()
 cache = {}
 chimeSpeed = 0.1
+
+#Creating camera instance
+camera = cv2.VideoCapture(1)
 
 #create LED instance
 led = NeoPixel(board.D12, 1)
@@ -69,14 +74,13 @@ if debug: print("connected to sheet")
 
 #----------------------------------------------------------------------------------------#
 
-#reader function
-def readCard():
-    try:
-        _, id = reader.read()
-        return id
-    except Exception as e:
-        if debug: print(e)
-        return None
+#Decode ids from camera
+def decode(image):
+    # returns the type and data of the first barcode it sees
+    decoded_objects = pyzbar.decode(image)
+    for obj in decoded_objects:
+        return obj.type, obj.data
+    return None, None
 
 #send data to spreadsheet
 def sendData(id, time):
@@ -84,7 +88,7 @@ def sendData(id, time):
 
 #log id to csv file
 def logID(id, is_sign_in):
-    with open ("/home/patribots/PatribotsSignIn/log.csv", "a") as log:
+    with open("/home/patribots/PatribotsSignIn/log.csv", "a") as log:
         is_sign_in = 1 if is_sign_in else 0
         if debug: print(f"is_sign_in (in log): {is_sign_in}")
         log.write(str(id).strip() + "," + str(time.time()).strip() + "," + str(is_sign_in) + "\n")
@@ -162,7 +166,16 @@ def main():
 
             #turn off LED if KeyboardInterrupt is detected
             try:
-                id = readCard()
+                _, frame = camera.read()
+                frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                cv2.imshow('img1', frame)  # display the captured image
+                cv2.imshow('cropped', frame[200:280, 160:480])
+                data = decode(frame)
+                if debug and data != (None, None): print(data, time.time())
+                cv2.waitKey(1)
+
+                id = decode(frame)[1]
+
             except KeyboardInterrupt:
                 setLED("off")
 
