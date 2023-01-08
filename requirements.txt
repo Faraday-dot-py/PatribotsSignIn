@@ -1,0 +1,9 @@
+ast
+distutils
+spread
+oauth2client
+GPIO
+numpy
+neopixel
+cv2
+pyzbars
